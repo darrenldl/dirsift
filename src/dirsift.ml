@@ -19,7 +19,7 @@ let rec dir_matches_typ dir typ =
 
 let run (typs : dir_typ list) (dir : string) =
   let sub_dirs =
-    try Sys.readdir dir |> Array.to_list
+    try Sys.readdir dir |> Array.to_list |> List.sort_uniq String.compare
     with _ -> failwith "Failed to read directory"
   in
   sub_dirs
@@ -35,7 +35,10 @@ let typ_arg =
       ("not-hidden", Not Hidden);
     ]
   in
-  let doc = "$(docv) is one of git, not-git" in
+  let doc =
+    Printf.sprintf "$(docv) is one of %s"
+      (String.concat ", " (List.map fst typs))
+  in
   Arg.(value & opt_all (enum typs) [] & info [ "t"; "type" ] ~doc ~docv:"TYPE")
 
 let dir_arg = Arg.(value & pos 0 dir "." & info [])
