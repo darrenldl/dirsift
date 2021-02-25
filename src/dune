@@ -4,5 +4,6 @@
  (public_name dirsift)
  (libraries containers
             fileutils
+            cmdliner
  )
 )
