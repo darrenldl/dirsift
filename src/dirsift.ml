@@ -81,21 +81,23 @@ let most_recent_mtime_of_files_inside dir =
     0L
 
 let rec dir_matches_typ dir typ =
-  CCIO.File.(exists dir && is_directory dir)
-  &&
-  match typ with
-  | Git ->
-    let sub_dirs =
-      try Sys.readdir dir with _ -> failwith "Failed to read directory"
-    in
-    Array.mem ".git" sub_dirs
-  | Hidden -> dir.[0] = '.'
-  | Hot -> most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
-  | Warm ->
-    let mtime = most_recent_mtime_of_files_inside dir in
-    !config.hot_upper_bound < mtime && mtime <= !config.warm_upper_bound
-  | Cold -> most_recent_mtime_of_files_inside dir > !config.warm_upper_bound
-  | Not x -> not (dir_matches_typ dir x)
+  try
+    CCIO.File.(exists dir && is_directory dir)
+    &&
+    match typ with
+    | Git ->
+      let sub_dirs =
+        try Sys.readdir dir with _ -> failwith "Failed to read directory"
+      in
+      Array.mem ".git" sub_dirs
+    | Hidden -> dir.[0] = '.'
+    | Hot -> most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
+    | Warm ->
+      let mtime = most_recent_mtime_of_files_inside dir in
+      !config.hot_upper_bound < mtime && mtime <= !config.warm_upper_bound
+    | Cold -> most_recent_mtime_of_files_inside dir > !config.warm_upper_bound
+    | Not x -> not (dir_matches_typ dir x)
+  with Sys_error _ -> false
 
 let run (typs : dir_typ list) (dir : string) =
   let sub_dirs =
