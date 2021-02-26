@@ -72,6 +72,20 @@ type dir_typ =
   | Cold
   | Not of dir_typ
 
+let rec difficulty_of_dir_typ typ =
+  match typ with
+  | Hidden -> 0
+  | Git -> 1
+  | Hot -> 2
+  | Warm -> 2
+  | Cold -> 2
+  | Not x -> difficulty_of_dir_typ x
+
+let sort_dir_typs_by_difficulty l =
+  List.sort
+    (fun x y -> compare (difficulty_of_dir_typ x) (difficulty_of_dir_typ y))
+    l
+
 let most_recent_mtime_of_files_inside dir =
   FileUtil.(find True dir)
     (fun most_recent_mtime file ->
@@ -103,6 +117,7 @@ let rec dir_matches_typ dir typ =
   with Sys_error _ -> false
 
 let run (typs : dir_typ list) (dir : string) =
+  let typs = sort_dir_typs_by_difficulty typs in
   let subdirs =
     try Sys.readdir dir |> Array.to_list |> List.sort_uniq String.compare
     with _ -> failwith "Failed to read directory"
