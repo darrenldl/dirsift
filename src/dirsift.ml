@@ -87,10 +87,10 @@ let rec dir_matches_typ dir typ =
   try
     match typ with
     | Git ->
-      let sub_dirs =
+      let subdirs =
         try Sys.readdir dir with _ -> failwith "Failed to read directory"
       in
-      Array.mem ".git" sub_dirs
+      Array.mem ".git" subdirs
     | Hidden -> (Filename.basename dir).[0] = '.'
     | Hot ->
       diff_most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
@@ -103,16 +103,20 @@ let rec dir_matches_typ dir typ =
   with Sys_error _ -> false
 
 let run (typs : dir_typ list) (dir : string) =
-  let sub_dirs =
+  let subdirs =
     try Sys.readdir dir |> Array.to_list |> List.sort_uniq String.compare
     with _ -> failwith "Failed to read directory"
   in
-  sub_dirs
-  |> List.filter (fun subdir ->
+  subdirs
+  |> List.to_seq
+  |> Seq.filter (fun subdir ->
       let full_path = Filename.concat dir subdir in
       CCIO.File.(exists full_path && is_directory full_path)
       && List.for_all (dir_matches_typ full_path) typs)
-  |> List.iter print_endline
+  |> (fun s ->
+      if dir = "." then s
+      else Seq.map (fun subdir -> Filename.concat dir subdir) s)
+  |> Seq.iter print_endline
 
 let typ_arg =
   let typs =
