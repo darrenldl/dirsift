@@ -5,5 +5,8 @@
  (libraries containers
             fileutils
             cmdliner
+            timere
+            timere-parse
+            toml
  )
 )
