@@ -80,6 +80,9 @@ let most_recent_mtime_of_files_inside dir =
        max most_recent_mtime mtime)
     0L
 
+let diff_most_recent_mtime_of_files_inside dir =
+  Int64.sub (Timere.timestamp_now ()) (most_recent_mtime_of_files_inside dir)
+
 let rec dir_matches_typ dir typ =
   try
     CCIO.File.(exists dir && is_directory dir)
@@ -91,11 +94,13 @@ let rec dir_matches_typ dir typ =
       in
       Array.mem ".git" sub_dirs
     | Hidden -> dir.[0] = '.'
-    | Hot -> most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
+    | Hot ->
+      diff_most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
     | Warm ->
-      let mtime = most_recent_mtime_of_files_inside dir in
-      !config.hot_upper_bound < mtime && mtime <= !config.warm_upper_bound
-    | Cold -> most_recent_mtime_of_files_inside dir > !config.warm_upper_bound
+      let diff = diff_most_recent_mtime_of_files_inside dir in
+      !config.hot_upper_bound < diff && diff <= !config.warm_upper_bound
+    | Cold ->
+      diff_most_recent_mtime_of_files_inside dir > !config.warm_upper_bound
     | Not x -> not (dir_matches_typ dir x)
   with Sys_error _ -> false
 
