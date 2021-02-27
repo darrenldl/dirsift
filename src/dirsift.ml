@@ -139,10 +139,10 @@ let typ_arg =
       ("git", Git);
       ("not-git", Not Git);
       ("hidden", Hidden);
+      ("not-hidden", Not Hidden);
       ("hot", Hot);
       ("warm", Warm);
       ("cold", Cold);
-      ("not-hidden", Not Hidden);
     ]
   in
   let doc =
