@@ -5,8 +5,10 @@
 ## Usage
 
 ```
-dirsift -t TYPE PATH
+dirsift -t TYPE [PATH]
 ```
+
+PATH defaults to `.` if unspecified
 
 TYPE can be one of
 - `git`
