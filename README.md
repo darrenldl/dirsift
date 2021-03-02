@@ -1,6 +1,6 @@
 # dirsift
 
-`find` for directories
+Search for directories by type
 
 ## Usage
 
