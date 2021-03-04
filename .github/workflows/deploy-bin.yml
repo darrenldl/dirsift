@@ -28,6 +28,7 @@ jobs:
       - name: Build
         run: |
           sudo apt-get install musl-tools
+          opam update
           opam install dune containers fmt fileutils cmdliner timere
           opam pin add timere-parse https://github.com/daypack-dev/timere.git
           eval $(opam env); make
