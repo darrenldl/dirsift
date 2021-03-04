@@ -2,7 +2,7 @@ name: Deploy binary
 on:
   create:
     tags:
-      - v*
+      - '*'
 
 jobs:
   build:
@@ -33,7 +33,8 @@ jobs:
           eval $(opam env); make
           cp _build/default/src/dirsift.exe dirsift
       - name: Upload to GitHub release
-        uses: actions/upload-artifact@v2-preview
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: dirsift
-          path: dirsift
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dirsift
+          tag: ${{ github.ref }}
