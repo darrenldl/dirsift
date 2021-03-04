@@ -20,16 +20,16 @@ let warm_upper_bound_key = "warm_upper_bound"
 
 let config : config ref = ref default_config
 
-let config_of_toml_table (table : TomlTypes.table) : (config, string) result =
+let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
   let exception Invalid_data of string in
   try
     let hot_upper_bound =
       match
-        TomlTypes.Table.(
+        Toml.Types.Table.(
           find_opt (Key.bare_key_of_string hot_upper_bound_key) table)
       with
       | None -> default_config.hot_upper_bound
-      | Some (TomlTypes.TString s) -> (
+      | Some (Toml.Types.TString s) -> (
           match Timere_parse.duration s with
           | Ok d -> Timere.Duration.to_seconds d
           | Error msg ->
@@ -43,11 +43,11 @@ let config_of_toml_table (table : TomlTypes.table) : (config, string) result =
     in
     let warm_upper_bound =
       match
-        TomlTypes.Table.(
+        Toml.Types.Table.(
           find_opt (Key.bare_key_of_string warm_upper_bound_key) table)
       with
       | None -> default_config.warm_upper_bound
-      | Some (TomlTypes.TString s) -> (
+      | Some (Toml.Types.TString s) -> (
           match Timere_parse.duration s with
           | Ok d -> Timere.Duration.to_seconds d
           | Error msg ->
