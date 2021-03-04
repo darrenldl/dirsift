@@ -1,6 +1,8 @@
 name: Deploy binary
 on:
-  release
+  create:
+    tags:
+      - v*
 
 jobs:
   build:
