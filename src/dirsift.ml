@@ -147,7 +147,9 @@ let typ_arg =
     ]
   in
   let doc =
-    Printf.sprintf "$(docv) is one of %s"
+    Printf.sprintf
+      "$(docv) is one of %s. If multiple types are specified, they are chained \
+       together by \"and\"."
       (String.concat ", " (List.map fst typs))
   in
   Arg.(value & opt_all (enum typs) [] & info [ "t"; "type" ] ~doc ~docv:"TYPE")
@@ -155,9 +157,7 @@ let typ_arg =
 let dir_arg = Arg.(value & pos 0 dir "." & info [])
 
 let cmd =
-  let doc =
-    "Filter directories which satisfy all directory types constraints"
-  in
+  let doc = "Search for directories" in
   (if CCIO.File.exists config_path && not (CCIO.File.is_directory config_path)
    then
      match Toml.Parser.from_filename config_path with
