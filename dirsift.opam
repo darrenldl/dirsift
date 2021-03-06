@@ -41,6 +41,7 @@ depends: [
   "fileutils"
   "toml" {>= "6.0.0"}
   "timere"
+  "timere-parse"
 ]
 build: [
   ["dune" "build" "-p" name "-j" jobs]
