@@ -2,6 +2,12 @@
 
 Search for directories
 
+## Installation
+
+Statically linked binaries are available via [GitHub releases](https://github.com/darrenldl/dirsift/releases)
+
+Alternatively you can install dirsift via opam
+
 ## Usage
 
 ```
