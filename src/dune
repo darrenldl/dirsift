@@ -8,5 +8,6 @@
             timere
             timere-parse
             toml
+            dune-build-info
  )
 )

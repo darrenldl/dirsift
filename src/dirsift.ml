@@ -158,6 +158,11 @@ let dir_arg = Arg.(value & pos 0 dir "." & info [])
 
 let cmd =
   let doc = "Search for directories by type" in
+  let version =
+    match Build_info.V1.version () with
+    | None -> "N/A"
+    | Some version -> Build_info.V1.Version.to_string version
+  in
   (if CCIO.File.exists config_path && not (CCIO.File.is_directory config_path)
    then
      match Toml.Parser.from_filename config_path with
@@ -170,6 +175,6 @@ let cmd =
      | `Error (msg, _) ->
        print_endline msg;
        exit 1);
-  (Term.(const run $ typ_arg $ dir_arg), Term.info "dirsift" ~doc)
+  (Term.(const run $ typ_arg $ dir_arg), Term.info "dirsift" ~version ~doc)
 
 let () = Term.(exit @@ Term.eval cmd)
