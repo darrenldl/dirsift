@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           sudo apt-get install musl-tools
-          opam install dune containers fmt fileutils cmdliner timere toml
+          opam install dune containers fmt fileutils cmdliner timere toml dune-build-info
           opam pin add timere-parse https://github.com/daypack-dev/timere.git
           eval $(opam env); make
           cp _build/default/src/dirsift.exe dirsift
