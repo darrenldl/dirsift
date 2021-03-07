@@ -157,7 +157,7 @@ let typ_arg =
 let dir_arg = Arg.(value & pos 0 dir "." & info [])
 
 let cmd =
-  let doc = "Search for directories" in
+  let doc = "Search for directories by type" in
   (if CCIO.File.exists config_path && not (CCIO.File.is_directory config_path)
    then
      match Toml.Parser.from_filename config_path with
