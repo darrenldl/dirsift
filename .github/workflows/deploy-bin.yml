@@ -30,7 +30,7 @@ jobs:
           sudo apt-get install musl-tools
           opam install dune containers fmt fileutils cmdliner timere toml dune-build-info
           opam pin add timere-parse https://github.com/daypack-dev/timere.git
-          eval $(opam env); make
+          eval $(opam env); make release-static
           cp _build/default/src/dirsift.exe dirsift
       - name: Upload to GitHub release
         uses: svenstaro/upload-release-action@v2
