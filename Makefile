@@ -12,9 +12,9 @@ OCPINDENT = ocp-indent \
 all :
 	dune build @all
 
-.PHONY: exe
-lib :
-	dune build src
+.PHONY: release-static
+release-static :
+	OCAMLPARAM='_,ccopt=-static' dune build --release src/dirsift.exe
 
 .PHONY: doc
 doc :
