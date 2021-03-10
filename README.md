@@ -36,3 +36,13 @@ TYPE can be one of
 
 If multiple `-t TYPE` are specified, they are connected by `and` (conjunction),
 i.e. directory must satisfy all TYPE requirements to be listed
+
+## Configuration
+
+Create a file at `~/.config/dirsift/config`, add any number of the options
+from the example config as follows
+
+```
+hot_upper_bound = "7d"
+warm_upper_bound = "30d"
+```
