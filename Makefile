@@ -25,11 +25,6 @@ format :
 	$(OCAMLFORMAT)
 	$(OCPINDENT)
 
-.PHONY: gen
-gen :
-	cd gen/ && dune build gen_time_zone_data.exe
-	dune exec gen/gen_time_zone_data.exe
-
 .PHONY : clean
 clean:
 	dune clean
