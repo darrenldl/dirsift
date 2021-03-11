@@ -1,5 +1,5 @@
 opam-version: "2.0"
-synopsis: "Search for directories"
+synopsis: "Search for directories by type"
 description: """
 ```
 dirsift -t TYPE [PATH]
