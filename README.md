@@ -22,6 +22,13 @@ TYPE can be one of
 - `git`
   - Directory contains `.git` subdirectory
 - `not-git`
+- `borg`
+  - Directory contains `README` which reads as follows
+    ```
+This is a Borg Backup repository.
+See https://borgbackup.readthedocs.io/
+    ```
+- `not-borg`
 - `hidden`
   - Name of directory begins with `.`
 - `not-hidden`
