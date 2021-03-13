@@ -104,14 +104,11 @@ let rec dir_matches_typ dir typ =
   try
     match typ with
     | Git ->
-      let subdirs =
-        try Sys.readdir dir with _ -> failwith "Failed to read directory"
-      in
-      Array.mem ".git" subdirs
+      FileUtil.(test FileUtil.Is_dir (Filename.concat dir ".git"))
     | Borg -> (
         let readme = Filename.concat dir "README" in
         try
-          FileUtil.(test FileUtil.Exists readme)
+          FileUtil.(test FileUtil.Is_file readme)
           &&
           let s = CCIO.with_in readme (fun ic -> CCIO.read_all ic) in
           s
