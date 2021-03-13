@@ -26,7 +26,7 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
     let hot_upper_bound =
       match
         Toml.Types.Table.(
-          find_opt (Key.bare_key_of_string hot_upper_bound_key) table)
+          find_opt (Key.of_string hot_upper_bound_key) table)
       with
       | None -> default_config.hot_upper_bound
       | Some (Toml.Types.TString s) -> (
@@ -44,7 +44,7 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
     let warm_upper_bound =
       match
         Toml.Types.Table.(
-          find_opt (Key.bare_key_of_string warm_upper_bound_key) table)
+          find_opt (Key.of_string warm_upper_bound_key) table)
       with
       | None -> default_config.warm_upper_bound
       | Some (Toml.Types.TString s) -> (
