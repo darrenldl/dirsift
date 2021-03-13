@@ -67,6 +67,7 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
 type dir_typ =
   | Git
   | Borg
+  | Restic
   | Hidden
   | Hot
   | Warm
@@ -77,6 +78,7 @@ let rec const_of_determining_dir_typ typ =
   match typ with
   | Hidden -> 0
   | Borg -> 1
+  | Restic -> 1
   | Git -> 1
   | Hot -> 2
   | Warm -> 2
@@ -103,12 +105,11 @@ let diff_most_recent_mtime_of_files_inside dir =
 let rec dir_matches_typ dir typ =
   try
     match typ with
-    | Git ->
-      FileUtil.(test FileUtil.Is_dir (Filename.concat dir ".git"))
+    | Git -> FileUtil.(test Is_dir (Filename.concat dir ".git"))
     | Borg -> (
         let readme = Filename.concat dir "README" in
         try
-          FileUtil.(test FileUtil.Is_file readme)
+          FileUtil.(test Is_file readme)
           &&
           let s = CCIO.with_in readme (fun ic -> CCIO.read_all ic) in
           s
@@ -116,6 +117,14 @@ let rec dir_matches_typ dir typ =
 See https://borgbackup.readthedocs.io/
 |}
         with _ -> false)
+    | Restic ->
+      FileUtil.(
+        test Is_file (Filename.concat dir "config")
+        && test Is_dir (Filename.concat dir "data")
+        && test Is_dir (Filename.concat dir "index")
+        && test Is_dir (Filename.concat dir "keys")
+        && test Is_dir (Filename.concat dir "locks")
+        && test Is_dir (Filename.concat dir "snapshots"))
     | Hidden -> (Filename.basename dir).[0] = '.'
     | Hot ->
       diff_most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
@@ -151,6 +160,8 @@ let typ_arg =
       ("not-git", Not Git);
       ("borg", Borg);
       ("not-borg", Not Borg);
+      ("restic", Restic);
+      ("not-restic", Not Restic);
       ("hidden", Hidden);
       ("not-hidden", Not Hidden);
       ("hot", Hot);
