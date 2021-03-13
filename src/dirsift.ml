@@ -66,6 +66,7 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
 
 type dir_typ =
   | Git
+  | Borg
   | Hidden
   | Hot
   | Warm
@@ -75,6 +76,7 @@ type dir_typ =
 let rec const_of_determining_dir_typ typ =
   match typ with
   | Hidden -> 0
+  | Borg -> 1
   | Git -> 1
   | Hot -> 2
   | Warm -> 2
@@ -106,6 +108,22 @@ let rec dir_matches_typ dir typ =
         try Sys.readdir dir with _ -> failwith "Failed to read directory"
       in
       Array.mem ".git" subdirs
+    | Borg -> (
+        let readme = (Filename.concat dir "README") in
+        try
+          FileUtil.(test FileUtil.Exists readme)
+            &&
+          let s =
+          CCIO.with_in readme (fun ic ->
+                CCIO.read_all ic
+            )
+          in
+          s = {|This is a Borg Backup repository.
+See https://borgbackup.readthedocs.io/
+|}
+        with
+        | _ -> false
+      )
     | Hidden -> (Filename.basename dir).[0] = '.'
     | Hot ->
       diff_most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
@@ -139,6 +157,8 @@ let typ_arg =
     [
       ("git", Git);
       ("not-git", Not Git);
+      ("borg", Borg);
+      ("not-borg", Not Borg);
       ("hidden", Hidden);
       ("not-hidden", Not Hidden);
       ("hot", Hot);
