@@ -109,21 +109,16 @@ let rec dir_matches_typ dir typ =
       in
       Array.mem ".git" subdirs
     | Borg -> (
-        let readme = (Filename.concat dir "README") in
+        let readme = Filename.concat dir "README" in
         try
           FileUtil.(test FileUtil.Exists readme)
-            &&
-          let s =
-          CCIO.with_in readme (fun ic ->
-                CCIO.read_all ic
-            )
-          in
-          s = {|This is a Borg Backup repository.
+          &&
+          let s = CCIO.with_in readme (fun ic -> CCIO.read_all ic) in
+          s
+          = {|This is a Borg Backup repository.
 See https://borgbackup.readthedocs.io/
 |}
-        with
-        | _ -> false
-      )
+        with _ -> false)
     | Hidden -> (Filename.basename dir).[0] = '.'
     | Hot ->
       diff_most_recent_mtime_of_files_inside dir <= !config.hot_upper_bound
