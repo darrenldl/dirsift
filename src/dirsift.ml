@@ -10,8 +10,8 @@ type config = {
 
 let default_config =
   {
-    hot_upper_bound = Timere.Duration.(make ~days:7 () |> to_seconds);
-    warm_upper_bound = Timere.Duration.(make ~days:30 () |> to_seconds);
+    hot_upper_bound = Timere.Duration.(make ~days:7 () |> to_span).s;
+    warm_upper_bound = Timere.Duration.(make ~days:30 () |> to_span).s;
   }
 
 let hot_upper_bound_key = "hot_upper_bound"
@@ -25,13 +25,12 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
   try
     let hot_upper_bound =
       match
-        Toml.Types.Table.(
-          find_opt (Key.of_string hot_upper_bound_key) table)
+        Toml.Types.Table.(find_opt (Key.of_string hot_upper_bound_key) table)
       with
       | None -> default_config.hot_upper_bound
       | Some (Toml.Types.TString s) -> (
           match Timere_parse.duration s with
-          | Ok d -> Timere.Duration.to_seconds d
+          | Ok d -> Timere.Duration.(to_span d).s
           | Error msg ->
             raise
               (Invalid_data
@@ -43,13 +42,12 @@ let config_of_toml_table (table : Toml.Types.table) : (config, string) result =
     in
     let warm_upper_bound =
       match
-        Toml.Types.Table.(
-          find_opt (Key.of_string warm_upper_bound_key) table)
+        Toml.Types.Table.(find_opt (Key.of_string warm_upper_bound_key) table)
       with
       | None -> default_config.warm_upper_bound
       | Some (Toml.Types.TString s) -> (
           match Timere_parse.duration s with
-          | Ok d -> Timere.Duration.to_seconds d
+          | Ok d -> Timere.Duration.(to_span d).s
           | Error msg ->
             raise
               (Invalid_data
@@ -100,7 +98,7 @@ let most_recent_mtime_of_files_inside dir =
     0L
 
 let diff_most_recent_mtime_of_files_inside dir =
-  Int64.sub (Timere.timestamp_now ()) (most_recent_mtime_of_files_inside dir)
+  Int64.sub (Timere.Timestamp.now ()).s (most_recent_mtime_of_files_inside dir)
 
 let rec dir_matches_typ dir typ =
   try
