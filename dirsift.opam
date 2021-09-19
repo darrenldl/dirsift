@@ -46,8 +46,8 @@ depends: [
   "containers" {>= "3.4"}
   "fileutils"
   "cmdliner"
-  "toml" {>= "7.0.0"}
-  "timedesc" {>= "0.4.0"}
+  "otoml" {>= "0.9.1"}
+  "timedesc" {>= "0.5.1"}
   "timere" {>= "0.6.0"}
   "timere-parse" {>= "0.0.5"}
   "dune-build-info"

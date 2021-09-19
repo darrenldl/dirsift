@@ -8,7 +8,7 @@
             timedesc
             timere
             timere-parse
-            toml
+            otoml
             dune-build-info
  )
 )
