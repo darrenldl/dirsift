@@ -66,10 +66,12 @@ type dir_typ =
   | Hot
   | Warm
   | Cold
+  | Empty
   | Not of dir_typ
 
 let rec const_of_determining_dir_typ typ =
   match typ with
+  | Empty -> 0
   | Hidden -> 0
   | Borg -> 1
   | Restic -> 1
@@ -120,6 +122,8 @@ See https://borgbackup.readthedocs.io/
           && test Is_dir (Filename.concat dir "locks")
           && test Is_dir (Filename.concat dir "snapshots"))
     | Hidden -> (Filename.basename dir).[0] = '.'
+    | Empty -> (
+        try Array.length (Sys.readdir dir) = 0 with Sys_error _ -> false)
     | Hot ->
         diff_most_recent_mtime_of_files_inside ~launch_time dir
         <= !config.hot_upper_bound
@@ -164,6 +168,8 @@ let typ_arg =
       ("hot", Hot);
       ("warm", Warm);
       ("cold", Cold);
+      ("empty", Empty);
+      ("not-empty", Not Empty);
     ]
   in
   let doc =
