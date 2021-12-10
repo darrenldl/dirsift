@@ -30,6 +30,8 @@ TYPE can be one of
   - User configurable
 - `cold`
   - Directory is neither `hot` nor `warm`
+- `empty`
+- `not-empty`
 
 If multiple `-t TYPE` are specified, they are connected by `and` (conjunction),
 i.e. directory must satisfy all TYPE requirements to be listed
