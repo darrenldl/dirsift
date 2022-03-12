@@ -30,13 +30,13 @@ let config_of_toml_table (toml : Otoml.t) : (config, string) result =
           match Timere_parse.span s with
           | Ok x -> Timedesc.Span.(get_s x)
           | Error msg ->
-              raise
-                (Invalid_data
-                   (Printf.sprintf "Key: %s, %s" hot_upper_bound_key msg)))
+            raise
+              (Invalid_data
+                 (Printf.sprintf "Key: %s, %s" hot_upper_bound_key msg)))
       | exception Otoml.Type_error _ ->
-          raise
-            (Invalid_data
-               (Printf.sprintf "Invalid data for %s" hot_upper_bound_key))
+        raise
+          (Invalid_data
+             (Printf.sprintf "Invalid data for %s" hot_upper_bound_key))
     in
     let warm_upper_bound =
       match Otoml.(find_opt toml get_string [ warm_upper_bound_key ]) with
@@ -45,13 +45,13 @@ let config_of_toml_table (toml : Otoml.t) : (config, string) result =
           match Timere_parse.span s with
           | Ok x -> Timedesc.Span.(get_s x)
           | Error msg ->
-              raise
-                (Invalid_data
-                   (Printf.sprintf "Key: %s, %s" warm_upper_bound_key msg)))
+            raise
+              (Invalid_data
+                 (Printf.sprintf "Key: %s, %s" warm_upper_bound_key msg)))
       | exception Otoml.Type_error _ ->
-          raise
-            (Invalid_data
-               (Printf.sprintf "Invalid data for %s" warm_upper_bound_key))
+        raise
+          (Invalid_data
+             (Printf.sprintf "Invalid data for %s" warm_upper_bound_key))
     in
     if warm_upper_bound < hot_upper_bound then
       raise (Invalid_data "Warm upper bound is lower than hot upper bound");
@@ -84,15 +84,15 @@ let rec const_of_determining_dir_typ typ =
 let sort_dir_typs_by_cost l =
   List.sort
     (fun x y ->
-      compare (const_of_determining_dir_typ x) (const_of_determining_dir_typ y))
+       compare (const_of_determining_dir_typ x) (const_of_determining_dir_typ y))
     l
 
 let most_recent_mtime_of_files_inside dir =
   FileUtil.(find True dir)
     (fun most_recent_mtime file ->
-      let stat = FileUtil.stat file in
-      let mtime = Int64.of_float stat.modification_time in
-      max most_recent_mtime mtime)
+       let stat = FileUtil.stat file in
+       let mtime = Int64.of_float stat.modification_time in
+       max most_recent_mtime mtime)
     0L
 
 let diff_most_recent_mtime_of_files_inside ~launch_time dir =
@@ -114,25 +114,25 @@ See https://borgbackup.readthedocs.io/
 |}
         with _ -> false)
     | Restic ->
-        FileUtil.(
-          test Is_file (Filename.concat dir "config")
-          && test Is_dir (Filename.concat dir "data")
-          && test Is_dir (Filename.concat dir "index")
-          && test Is_dir (Filename.concat dir "keys")
-          && test Is_dir (Filename.concat dir "locks")
-          && test Is_dir (Filename.concat dir "snapshots"))
+      FileUtil.(
+        test Is_file (Filename.concat dir "config")
+        && test Is_dir (Filename.concat dir "data")
+        && test Is_dir (Filename.concat dir "index")
+        && test Is_dir (Filename.concat dir "keys")
+        && test Is_dir (Filename.concat dir "locks")
+        && test Is_dir (Filename.concat dir "snapshots"))
     | Hidden -> (Filename.basename dir).[0] = '.'
     | Empty -> (
         try Array.length (Sys.readdir dir) = 0 with Sys_error _ -> false)
     | Hot ->
-        diff_most_recent_mtime_of_files_inside ~launch_time dir
-        <= !config.hot_upper_bound
+      diff_most_recent_mtime_of_files_inside ~launch_time dir
+      <= !config.hot_upper_bound
     | Warm ->
-        let diff = diff_most_recent_mtime_of_files_inside ~launch_time dir in
-        !config.hot_upper_bound < diff && diff <= !config.warm_upper_bound
+      let diff = diff_most_recent_mtime_of_files_inside ~launch_time dir in
+      !config.hot_upper_bound < diff && diff <= !config.warm_upper_bound
     | Cold ->
-        diff_most_recent_mtime_of_files_inside ~launch_time dir
-        > !config.warm_upper_bound
+      diff_most_recent_mtime_of_files_inside ~launch_time dir
+      > !config.warm_upper_bound
     | Not x -> not (dir_matches_typ ~launch_time dir x)
   with Sys_error _ -> false
 
@@ -146,12 +146,12 @@ let run (typs : dir_typ list) (dir : string) =
   subdirs
   |> List.to_seq
   |> Seq.filter (fun subdir ->
-         let full_path = Filename.concat dir subdir in
-         CCIO.File.(exists full_path && is_directory full_path)
-         && List.for_all (dir_matches_typ ~launch_time full_path) typs)
+      let full_path = Filename.concat dir subdir in
+      CCIO.File.(exists full_path && is_directory full_path)
+      && List.for_all (dir_matches_typ ~launch_time full_path) typs)
   |> (fun s ->
-       if dir = "." then s
-       else Seq.map (fun subdir -> Filename.concat dir subdir) s)
+      if dir = "." then s
+      else Seq.map (fun subdir -> Filename.concat dir subdir) s)
   |> Seq.iter print_endline
 
 let typ_arg =
@@ -190,15 +190,15 @@ let cmd =
     | Some version -> Build_info.V1.Version.to_string version
   in
   (if CCIO.File.exists config_path && not (CCIO.File.is_directory config_path)
-  then
-   match Otoml.Parser.from_file_result config_path with
-   | Ok table -> (
-       match config_of_toml_table table with
-       | Ok config' -> config := config'
-       | Error msg ->
+   then
+     match Otoml.Parser.from_file_result config_path with
+     | Ok table -> (
+         match config_of_toml_table table with
+         | Ok config' -> config := config'
+         | Error msg ->
            print_endline msg;
            exit 1)
-   | Error msg ->
+     | Error msg ->
        print_endline msg;
        exit 1);
   (Term.(const run $ typ_arg $ dir_arg), Term.info "dirsift" ~version ~doc)
