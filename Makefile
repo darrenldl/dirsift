@@ -15,6 +15,7 @@ all :
 .PHONY: release-static
 release-static :
 	OCAMLPARAM='_,ccopt=-static' dune build --release src/dirsift.exe
+	cp _build/default/src/dirshift.exe dirshift
 
 .PHONY: doc
 doc :
