@@ -1,6 +1,6 @@
 # dirsift
 
-Search for directories by type
+Search for directories by types
 
 ## Installation
 
